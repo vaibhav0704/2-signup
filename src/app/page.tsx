@@ -1,113 +1,198 @@
-import Image from "next/image";
+'use client'
+
+import { 
+  Button, 
+  FormControl, 
+  FormErrorMessage, 
+  FormLabel, 
+  Input, 
+  InputGroup, 
+  InputRightElement, 
+  NumberDecrementStepper, 
+  NumberIncrementStepper, 
+  NumberInput, 
+  NumberInputField, 
+  NumberInputStepper, 
+  Select, 
+  VStack
+} from "@chakra-ui/react";
+import { useState } from "react";
+import countryList from "@/countries";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+// Input Schema for react-hook-form
+type Inputs = {
+  email: string,
+  name: string,
+  country: string,
+  age: number,
+  password: string,
+}
+
+const MIN_AGE: number = 0
+const MAX_AGE: number = 150
 
 export default function Home() {
+  const [show, setShow] = useState<boolean>(false);
+  const handlePasswordShow = () => {
+    setShow(!show)
+  };
+  
+  /**
+   * register: adds the form fields to hook monitoring
+   * handleSubmit: invokes on submitting the html form and passes the processed data to callback passed
+   * forState: { errors } destructured errors returned by hooks after validation
+   */
+  const { register, handleSubmit, formState: { errors } } = useForm<Inputs>();  
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log(data);
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+    <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-16 lg:p-24">
+
+      <form  onSubmit={handleSubmit(onSubmit)}>
+
+        <VStack
+          padding={10} 
+          borderRadius={16}
+          spacing={10}
+          borderColor={'gray.400'}
+          borderWidth={1}
+        >
+          <h1>Sign Up</h1>
+
+          {/**  isInvalid prop controls display of error message */}
+          <FormControl isInvalid={!!errors.email}>
+            <FormLabel>Email address</FormLabel>
+            <Input 
+              variant={'filled'}
+              bg={'gray.400'}
+              type='email'
+              {...register("email", {
+                required: "Please give us your email",
+                pattern: { 
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 
+                  message: "This email is not a valid one" 
+                }
+              })}              
             />
-          </a>
-        </div>
-      </div>
+            {!!errors.email && (
+              <>
+                <FormErrorMessage>{errors.email.message}</FormErrorMessage>
+              </>
+            )}
+          </FormControl>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+          <FormControl isInvalid={!!errors.name}>
+            <FormLabel>Name</FormLabel>
+            <Input 
+              variant={'filled'} 
+              bg='gray.400'
+              type='text' 
+              {...register("name", {
+                required: "Please give us your name",
+                minLength: { value: 2, message: "Name should be at least 2 letters long" }
+              })}  
+            />
+            {!!errors.name && (
+              <>
+                <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+              </>
+            )}
+          </FormControl>    
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+          <FormControl isInvalid={!!errors.country}>
+            <FormLabel>Country</FormLabel>
+            <Select 
+              placeholder='Select Country' 
+              variant='filled'
+              bg='gray.400'
+              {...register("country", {
+                required: "Please provide us your country"
+              })}
+            >
+              {
+                countryList.map((country, key) => (
+                  <option key={key} value={country}>{country}</option>
+                ))
+              }
+            </Select>
+            {!!errors.country && (
+              <>
+                <FormErrorMessage>{errors.country.message}</FormErrorMessage>
+              </>
+            )}
+          </FormControl>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+          <FormControl isInvalid={!!errors.age}>
+            <FormLabel>Age</FormLabel>
+            <NumberInput 
+              variant={'filled'} 
+              min={MIN_AGE} 
+              max={MAX_AGE} 
+              clampValueOnBlur={false}
+            >
+              <NumberInputField  
+                bg='gray.400'
+                {...register("age", {
+                  required: "Please provde us your age",
+                  min: { value: MIN_AGE, message: `Age cannot be less than ${MIN_AGE} years` },
+                  max: { value: MAX_AGE, message: `Age cannot be more than ${MAX_AGE} years` }
+                })}
+              />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+            {!!errors.age && (
+              <>
+                <FormErrorMessage>{errors.age.message}</FormErrorMessage>
+              </>
+            )}
+          </FormControl>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+          <FormControl isInvalid={!!errors.password}>
+            <FormLabel>Password</FormLabel>
+            <InputGroup size='md'>
+              <Input
+                variant={'filled'}
+                bg='gray.400'
+                pr='4.5rem'
+                type={show ? 'text' : 'password'}
+                placeholder='Enter password'
+                {...register("password", {
+                  required: "Password is mandatory",
+                  minLength: { value: 8, message: "Password must be at least 8 characters long" }
+                })}
+              />
+              <InputRightElement width='4.5rem'>
+                <Button variant={'outlined'} h='1.75rem' size='sm' onClick={handlePasswordShow}>
+                  {show ? 'Hide' : 'Show'}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+            {!!errors.password && (
+              <>
+                <FormErrorMessage>{errors.password.message}</FormErrorMessage>
+              </>
+            )}
+          </FormControl>
+          
+          <Button 
+            isDisabled={!!errors.age || !!errors.country || !!errors.email || !!errors.password || !!errors.name} 
+            type="submit"
+            bg={'gray.400'}
+          >
+              Submit
+          </Button>
+          
+        </VStack>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+
+      </form>
     </main>
   );
 }
+``
