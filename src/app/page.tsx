@@ -68,7 +68,7 @@ export default function Home() {
             <Input 
               variant={'filled'}
               bg={'gray.400'}
-              type='email'
+              type='text'
               {...register("email", {
                 required: "Please give us your email",
                 pattern: { 
